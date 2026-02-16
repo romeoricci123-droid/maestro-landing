@@ -571,7 +571,7 @@
   <div class="nav-links">
     <a href="#how">How It Works</a>
     <a href="#why">Why MAESTRO</a>
-    <a href="#compare">Compare</a>
+    <a href="#compare">The Gap</a>
     <a href="#waitlist" class="btn-waitlist">Get Early Access</a>
   </div>
 </nav>
@@ -741,73 +741,33 @@
   </div>
 </section>
 
-<!-- Comparison -->
+<!-- What's Missing -->
 <section class="comparison" id="compare">
-  <div class="section-label">Compare</div>
-  <h2 class="section-title">MAESTRO vs. the field.</h2>
+  <div class="section-label">The Gap</div>
+  <h2 class="section-title">What today's AI coding tools are missing.</h2>
 
-  <table class="comparison-table">
-    <thead>
-      <tr>
-        <th>Feature</th>
-        <th>MAESTRO</th>
-        <th>Devin</th>
-        <th>Cursor</th>
-        <th>Claude Code</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="row-maestro">
-        <td>Independent code review</td>
-        <td><span class="check">✓ Multi-layer</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-      </tr>
-      <tr>
-        <td>Sandbox isolation</td>
-        <td><span class="check">✓ Cloud sandbox</span></td>
-        <td><span class="partial">~ Basic</span></td>
-        <td><span class="cross">✗ Local</span></td>
-        <td><span class="cross">✗ Local</span></td>
-      </tr>
-      <tr class="row-maestro">
-        <td>Multi-executor</td>
-        <td><span class="check">✓ 4 providers</span></td>
-        <td><span class="cross">✗ Single</span></td>
-        <td><span class="partial">~ 2 models</span></td>
-        <td><span class="cross">✗ Claude only</span></td>
-      </tr>
-      <tr>
-        <td>Audit trail</td>
-        <td><span class="check">✓ Full pipeline</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="partial">~ Logs</span></td>
-      </tr>
-      <tr class="row-maestro">
-        <td>Automatic rollback</td>
-        <td><span class="check">✓</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-      </tr>
-      <tr>
-        <td>EU AI Act compliance</td>
-        <td><span class="check">✓ Built-in</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-        <td><span class="cross">✗</span></td>
-      </tr>
-      <tr class="row-maestro">
-        <td>Fully autonomous</td>
-        <td><span class="check">✓ End-to-end</span></td>
-        <td><span class="check">✓</span></td>
-        <td><span class="cross">✗ Human-in-loop</span></td>
-        <td><span class="partial">~ Semi</span></td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="problem-grid" style="margin-top: 3rem;">
+    <div class="problem-card">
+      <div class="icon">🔍</div>
+      <h3>No independent review</h3>
+      <p>The same AI that writes the code is the only one checking it. There's no second opinion, no adversarial challenge, no separation of concerns.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🏗️</div>
+      <h3>No real isolation</h3>
+      <p>Most tools run directly in your local environment. One hallucinated command can overwrite files, break builds, or corrupt your working directory.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">📊</div>
+      <h3>No audit trail</h3>
+      <p>When your compliance team asks who wrote this code, who reviewed it, and what safety checks it passed — there's no answer. MAESTRO logs every decision.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🔗</div>
+      <h3>Single provider dependency</h3>
+      <p>Locked to one AI model. When it has a bad day, degrades, or changes pricing — your entire workflow stops. MAESTRO runs four independent executors.</p>
+    </div>
+  </div>
 </section>
 
 <!-- Terminal Demo -->
