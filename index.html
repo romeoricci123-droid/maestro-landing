@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAESTRO — Your Autonomous Dev Team</title>
+<meta name="description" content="MAESTRO orchestrates multiple AI executors through independent safety layers. Enterprise-grade autonomous software development with EU AI Act compliance.">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0a0f;
+    --bg-surface: #12121a;
+    --bg-elevated: #1a1a26;
+    --border: #2a2a3a;
+    --border-bright: #3a3a5a;
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888a0;
+    --text-dim: #555568;
+    --accent: #4af0c0;
+    --accent-glow: rgba(74, 240, 192, 0.15);
+    --accent-dim: #2a9070;
+    --danger: #f04a4a;
+    --warning: #f0c04a;
+    --blue: #4a90f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1.2rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+
+  .btn-waitlist {
+    background: var(--accent);
+    color: var(--bg-deep);
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-waitlist:hover {
+    box-shadow: 0 0 30px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border-bright);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    width: fit-content;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-badge .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .btn-secondary {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--border-bright);
+    color: var(--text-primary);
+  }
+
+  .hero-proof {
+    margin-top: 4rem;
+    display: flex;
+    gap: 3rem;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+  .proof-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .proof-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .proof-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Glow orb behind hero */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(80px);
+  }
+
+  /* Section styles */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* Problem section */
+  .problem {
+    border-top: 1px solid var(--border);
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .problem-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-surface);
+    transition: border-color 0.3s;
+  }
+  .problem-card:hover { border-color: var(--border-bright); }
+
+  .problem-card .icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .problem-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .problem-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Pipeline section */
+  .pipeline {
+    border-top: 1px solid var(--border);
+  }
+
+  .pipeline-flow {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .pipeline-step {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .step-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    padding-top: 0.15rem;
+    letter-spacing: 0.02em;
+  }
+
+  .step-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .step-content p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .step-tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.65rem;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+  .tag-write { background: rgba(74, 144, 240, 0.15); color: var(--blue); }
+  .tag-review { background: rgba(240, 192, 74, 0.15); color: var(--warning); }
+  .tag-safety { background: rgba(74, 240, 192, 0.15); color: var(--accent); }
+  .tag-gate { background: rgba(240, 74, 74, 0.15); color: var(--danger); }
+
+  /* Why section */
+  .why {
+    border-top: 1px solid var(--border);
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .why-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-surface);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .why-card:hover { border-color: var(--border-bright); }
+
+  .why-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  .why-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .why-card .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .card-accent-green { background: linear-gradient(90deg, var(--accent), transparent); }
+  .card-accent-blue { background: linear-gradient(90deg, var(--blue), transparent); }
+  .card-accent-yellow { background: linear-gradient(90deg, var(--warning), transparent); }
+
+  /* Comparison */
+  .comparison {
+    border-top: 1px solid var(--border);
+  }
+
+  .comparison-table {
+    width: 100%;
+    margin-top: 3rem;
+    border-collapse: collapse;
+  }
+  .comparison-table th,
+  .comparison-table td {
+    padding: 1rem 1.2rem;
+    text-align: left;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table th {
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .comparison-table td { color: var(--text-secondary); }
+  .comparison-table tr:last-child td { border-bottom: none; }
+
+  .comparison-table .row-maestro td {
+    color: var(--text-primary);
+    font-weight: 500;
+    background: rgba(74, 240, 192, 0.03);
+  }
+  .comparison-table .row-maestro td:first-child {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .check { color: var(--accent); }
+  .cross { color: var(--text-dim); }
+  .partial { color: var(--warning); }
+
+  /* Terminal demo */
+  .demo {
+    border-top: 1px solid var(--border);
+  }
+
+  .terminal {
+    margin-top: 3rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.8;
+  }
+
+  .terminal-bar {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .terminal-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #f04a4a; }
+  .dot-yellow { background: #f0c04a; }
+  .dot-green { background: #4af0c0; }
+  .terminal-title {
+    margin-left: 0.8rem;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  .t-prompt { color: var(--accent); }
+  .t-cmd { color: var(--text-primary); }
+  .t-output { color: var(--text-secondary); }
+  .t-success { color: var(--accent); }
+  .t-score { color: var(--warning); }
+  .t-dim { color: var(--text-dim); }
+
+  .terminal-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* CTA */
+  .cta {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 8rem 2rem;
+  }
+
+  .cta .section-title {
+    max-width: 600px;
+    margin: 0 auto 1rem;
+  }
+  .cta .section-desc {
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .email-form {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .email-form input {
+    flex: 1;
+    padding: 0.8rem 1.2rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .email-form input:focus { border-color: var(--accent); }
+  .email-form input::placeholder { color: var(--text-dim); }
+
+  /* Footer */
+  footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.78rem;
+  }
+  footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  /* EU badge */
+  .eu-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .problem-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .pipeline-step { grid-template-columns: 1fr; gap: 0.5rem; }
+    .hero-proof { flex-wrap: wrap; gap: 2rem; }
+    .comparison-table { font-size: 0.75rem; }
+    .comparison-table th, .comparison-table td { padding: 0.7rem; }
+    .email-form { flex-direction: column; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">MAESTRO</div>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#why">Why MAESTRO</a>
+    <a href="#compare">Compare</a>
+    <a href="#waitlist" class="btn-waitlist">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    <span class="mono" style="font-size: 0.72rem;">Now accepting early access applications</span>
+  </div>
+
+  <h1>
+    Your autonomous<br>
+    <span class="highlight">dev team,</span><br>
+    not a copilot.
+  </h1>
+
+  <p class="hero-sub">
+    MAESTRO orchestrates multiple AI executors through independent safety layers — the way a real engineering org works. One writes. Another reviews. Another audits. Every change earns its commit.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#waitlist" class="btn-waitlist" style="font-size: 0.95rem; padding: 0.75rem 1.8rem;">Join the Waitlist</a>
+    <a href="#how" class="btn-secondary">See how it works ↓</a>
+  </div>
+
+  <div class="hero-proof">
+    <div class="proof-item">
+      <span class="proof-value">95/100</span>
+      <span class="proof-label">Auditor Score</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-value">100/100</span>
+      <span class="proof-label">Critic Score</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-value">400+</span>
+      <span class="proof-label">Automated Tests</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-value">4</span>
+      <span class="proof-label">AI Executors</span>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="problem">
+  <div class="section-label">The Problem</div>
+  <h2 class="section-title">AI copilots suggest code.<br>Nobody checks it.</h2>
+  <p class="section-desc">Current tools generate code fast — but with no independent review, no audit trail, and no safety guarantees. You're the safety system.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="icon">⚡</div>
+      <h3>Single-agent blindspot</h3>
+      <p>One AI writes and one human reviews. When the AI is wrong, you catch it — or you don't. There's no second opinion.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🔓</div>
+      <h3>No isolation</h3>
+      <p>Most tools run in your local environment. One bad generation can corrupt your working directory, overwrite files, or break your build.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">📋</div>
+      <h3>No audit trail</h3>
+      <p>When regulators ask "who wrote this code and who reviewed it?" — you need an answer. Current tools don't give you one.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🔒</div>
+      <h3>Vendor lock-in</h3>
+      <p>Tied to one model provider. When GPT-4 has a bad day or Claude changes pricing, your entire workflow breaks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pipeline -->
+<section class="pipeline" id="how">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">A full engineering pipeline.<br>Every mission, every time.</h2>
+  <p class="section-desc">MAESTRO runs every code change through a structured pipeline — the same way a real engineering organization operates.</p>
+
+  <div class="pipeline-flow">
+    <div class="pipeline-step">
+      <div class="step-name">01 ARCHITECT</div>
+      <div class="step-content">
+        <h3>Analyze the mission</h3>
+        <p>Understands the codebase, plans the approach, identifies risks before a single line is written.</p>
+        <span class="step-tag tag-write">PLANNING</span>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-name">02 PLANNER</div>
+      <div class="step-content">
+        <h3>Break into tasks</h3>
+        <p>Decomposes the mission into concrete, scoped tasks with explicit boundaries and constraints.</p>
+        <span class="step-tag tag-write">PLANNING</span>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-name">03 EXECUTOR</div>
+      <div class="step-content">
+        <h3>Write the code</h3>
+        <p>Multiple AI executors available — Claude Code, Codex, Gemini, Ollama. Runs in an isolated sandbox. Can't touch your repo directly.</p>
+        <span class="step-tag tag-write">EXECUTION</span>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-name">04 REVIEW GATE</div>
+      <div class="step-content">
+        <h3>Independent code review</h3>
+        <p>A separate AI reviewer examines every change. Checks for bugs, scope violations, security issues. Can reject and send back.</p>
+        <span class="step-tag tag-review">REVIEW</span>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-name">05 AUDITOR</div>
+      <div class="step-content">
+        <h3>Grade the work</h3>
+        <p>Scores code quality, architecture, test coverage, and documentation on a 0–100 scale. Sets the quality bar.</p>
+        <span class="step-tag tag-safety">SAFETY</span>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-name">06 CRITIC</div>
+      <div class="step-content">
+        <h3>Challenge the auditor</h3>
+        <p>An adversarial reviewer that questions the auditor's assessment. Prevents rubber-stamping. Forces rigor.</p>
+        <span class="step-tag tag-gate">ADVERSARIAL</span>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-name">07 COMMIT</div>
+      <div class="step-content">
+        <h3>Earn the merge</h3>
+        <p>Only code that passes review, audit, and critique gets promoted to your repository. Full git integrity verification.</p>
+        <span class="step-tag tag-safety">PROMOTION</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why -->
+<section class="why" id="why">
+  <div class="section-label">Why MAESTRO</div>
+  <h2 class="section-title">Built different.</h2>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="card-accent card-accent-green"></div>
+      <h3>Safety-first architecture</h3>
+      <p>Multi-reviewer consensus. Sandbox isolation. Automatic rollback. Scope violation detection. Git integrity checks. Every change earns its way in.</p>
+    </div>
+    <div class="why-card">
+      <div class="card-accent card-accent-blue"></div>
+      <h3>Multi-executor diversity</h3>
+      <p>Not locked to one AI provider. Claude Code, Codex, Gemini, Ollama — choose per mission. When one model struggles, switch. No vendor dependency.</p>
+    </div>
+    <div class="why-card">
+      <div class="card-accent card-accent-yellow"></div>
+      <h3>EU AI Act ready</h3>
+      <p>Full audit trails. Traceability of every AI decision. Human oversight enforced. Sandbox isolation. Built for the compliance reality landing August 2026.</p>
+      <div class="eu-badge">
+        🇪🇺 <span>Compliance-ready for EU AI Act</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison -->
+<section class="comparison" id="compare">
+  <div class="section-label">Compare</div>
+  <h2 class="section-title">MAESTRO vs. the field.</h2>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>MAESTRO</th>
+        <th>Devin</th>
+        <th>Cursor</th>
+        <th>Claude Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-maestro">
+        <td>Independent code review</td>
+        <td><span class="check">✓ Multi-layer</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Sandbox isolation</td>
+        <td><span class="check">✓ Cloud sandbox</span></td>
+        <td><span class="partial">~ Basic</span></td>
+        <td><span class="cross">✗ Local</span></td>
+        <td><span class="cross">✗ Local</span></td>
+      </tr>
+      <tr class="row-maestro">
+        <td>Multi-executor</td>
+        <td><span class="check">✓ 4 providers</span></td>
+        <td><span class="cross">✗ Single</span></td>
+        <td><span class="partial">~ 2 models</span></td>
+        <td><span class="cross">✗ Claude only</span></td>
+      </tr>
+      <tr>
+        <td>Audit trail</td>
+        <td><span class="check">✓ Full pipeline</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="partial">~ Logs</span></td>
+      </tr>
+      <tr class="row-maestro">
+        <td>Automatic rollback</td>
+        <td><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>EU AI Act compliance</td>
+        <td><span class="check">✓ Built-in</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr class="row-maestro">
+        <td>Fully autonomous</td>
+        <td><span class="check">✓ End-to-end</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="cross">✗ Human-in-loop</span></td>
+        <td><span class="partial">~ Semi</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Terminal Demo -->
+<section class="demo">
+  <div class="section-label">In Action</div>
+  <h2 class="section-title">Watch a mission run.</h2>
+  <p class="section-desc">Real output from MAESTRO's first successful mission — scaffolding a full-stack project with gallery, upload, and metadata extraction.</p>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot dot-red"></div>
+      <div class="terminal-dot dot-yellow"></div>
+      <div class="terminal-dot dot-green"></div>
+      <span class="terminal-title">maestro — mission: lumiere-m1</span>
+    </div>
+    <div class="terminal-body">
+      <div class="terminal-line"><span class="t-prompt">❯</span> <span class="t-cmd">maestro run --mission lumiere-m1 --mode standard</span></div>
+      <div class="terminal-line"><span class="t-dim">───────────────────────────────────────</span></div>
+      <div class="terminal-line"><span class="t-output">⠋ Architect analyzing codebase...</span></div>
+      <div class="terminal-line"><span class="t-output">✓ Architecture plan ready — 3 components identified</span></div>
+      <div class="terminal-line"><span class="t-output">⠋ Planner decomposing into tasks...</span></div>
+      <div class="terminal-line"><span class="t-output">✓ 5 tasks scoped with boundaries</span></div>
+      <div class="terminal-line"><span class="t-dim">───────────────────────────────────────</span></div>
+      <div class="terminal-line"><span class="t-output">⠋ Executor [claude-code] running in sandbox...</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Created backend/main.py</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Created frontend/src/routes/+page.svelte</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Created tests/test_upload.py</span></div>
+      <div class="terminal-line"><span class="t-output">  └─ 12 files modified</span></div>
+      <div class="terminal-line"><span class="t-output">✓ Execution complete — 4m 32s</span></div>
+      <div class="terminal-line"><span class="t-dim">───────────────────────────────────────</span></div>
+      <div class="terminal-line"><span class="t-output">⠋ Review Gate examining changes...</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Review PASSED — no scope violations</span></div>
+      <div class="terminal-line"><span class="t-output">⠋ Auditor scoring...</span></div>
+      <div class="terminal-line"><span class="t-score">  Score: 95/100</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Code quality:     19/20</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Architecture:     20/20</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Test coverage:    18/20</span></div>
+      <div class="terminal-line"><span class="t-output">  ├─ Documentation:    19/20</span></div>
+      <div class="terminal-line"><span class="t-output">  └─ Security:         19/20</span></div>
+      <div class="terminal-line"><span class="t-output">⠋ Critic challenging audit...</span></div>
+      <div class="terminal-line"><span class="t-score">  Critic score: 100/100 — audit confirmed</span></div>
+      <div class="terminal-line"><span class="t-dim">───────────────────────────────────────</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Mission COMPLETE — changes promoted to repository</span></div>
+      <div class="terminal-line"><span class="t-success">  commit a3f7c2e "feat: scaffold Lumière M1 gallery"</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="waitlist">
+  <div class="section-label">Early Access</div>
+  <h2 class="section-title">Stop reviewing AI code yourself.</h2>
+  <p class="section-desc">Join the waitlist for early access. We're onboarding teams who need autonomous, safe, auditable code generation.</p>
+
+  <div class="email-form">
+    <input type="email" placeholder="you@company.com" aria-label="Email address">
+    <button class="btn-waitlist" style="white-space: nowrap;">Get Early Access</button>
+  </div>
+
+  <p style="margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-dim);">
+    No spam. We'll notify you when early access opens.
+  </p>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p style="margin-bottom: 0.5rem;">
+    <span style="color: var(--accent); font-weight: 700; letter-spacing: 0.15em; font-size: 0.85rem;">MAESTRO</span>
+  </p>
+  <p>Autonomous software orchestration. Built in Europe. 🇪🇺</p>
+  <p style="margin-top: 0.8rem;">© 2026 MAESTRO · <a href="mailto:hello@maestro-orchestrator.dev">hello@maestro-orchestrator.dev</a></p>
+</footer>
+
+</body>
+</html>
